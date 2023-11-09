@@ -1,0 +1,17 @@
+name: Lint
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  lint:
+    uses: FarawayGG/miniroyale-github-actions/.github/workflows/lint.yaml@main
+    secrets:
+      GRANNY_TOKEN: ${{ secrets.GRANNY_TOKEN }}
