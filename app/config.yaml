@@ -1,0 +1,4 @@
+Listen:
+  GRPC: ":37070"
+LogLevel: debug
+DBConnstring: "postgres://postgres@localhost:5432?sslmode=disable&dbname=wisdoms_test"

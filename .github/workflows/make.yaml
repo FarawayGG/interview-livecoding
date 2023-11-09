@@ -1,0 +1,15 @@
+name: Make
+
+on:
+  push:
+
+jobs:
+  make:
+    name: Go Build
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Go Test
+      uses: FarawayGG/miniroyale-github-actions/go-test@main
+      with:
+        github_token: ${{ secrets.GRANNY_TOKEN }}

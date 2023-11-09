@@ -1,0 +1,13 @@
+version: "3"
+services:
+  pg:
+    image: postgres:10
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - wisdoms:/var/lib/postgresql/data
+
+volumes:
+  wisdoms:
