@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	"github.com/go-playground/validator/v10"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	"github.com/pkg/errors"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc/codes"
 	"gopkg.in/yaml.v3"
@@ -19,24 +19,24 @@ type Config struct {
 		GRPC string `yaml:"GRPC" validate:"required"`
 	} `yaml:"Listen" validate:"required"`
 	LogLevel     string `yaml:"LogLevel" validate:"required"`
-	DBConnstring string `yaml:"DBConnstring" validate:"required"`
+	DBConnString string `yaml:"DBConnString" validate:"required"`
 }
 
 func mustLoadConfig() Config {
 	configFile, err := os.Open(*configFile)
 	if err != nil {
-		panic(errors.WithMessage(err, "os.Open"))
+		panic(fmt.Errorf("os.Open: %w", err))
 	}
 	defer configFile.Close()
 
 	var config Config
 	yamlDecoder := yaml.NewDecoder(configFile)
 	if err := yamlDecoder.Decode(&config); err != nil {
-		panic(errors.WithMessage(err, "yamlDecoder.Decode"))
+		panic(fmt.Errorf("yamlDecoder.Decode: %w", err))
 	}
 
 	if err := validator.New().Struct(config); err != nil {
-		panic(errors.WithMessage(err, "validator.New().Struct"))
+		panic(fmt.Errorf("validator.New().Struct: %w", err))
 	}
 
 	return config

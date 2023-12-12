@@ -6,11 +6,10 @@ export GOPRIVATE := github.com/farawaygg/*
 export GONOSUMDB := github.com/farawaygg
 export PATH := $(GOBIN):$(PATH)
 
-SHELL := env PATH=$(PATH) /bin/sh
 PROTOC_VERSION := 3.18.0
 MIGRATE_VERSION := 4.15.2
 PROTOC_VALIDATE_VERSION := 0.6.2
-GOLANGLINT_VERSION := 1.51.2
+GOLANGLINT_VERSION := 1.55.2
 
 GOFLAGS ?=
 

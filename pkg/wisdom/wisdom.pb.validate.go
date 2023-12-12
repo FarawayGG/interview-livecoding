@@ -90,6 +90,7 @@ func (m *Wisdom) validate(all bool) error {
 	if len(errors) > 0 {
 		return WisdomMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -188,6 +189,7 @@ func (m *GetWisdoms) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetWisdomsMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -308,6 +310,7 @@ func (m *GetWisdoms_Request) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetWisdoms_RequestMultiError(errors)
 	}
+
 	return nil
 }
 
@@ -443,6 +446,7 @@ func (m *GetWisdoms_Response) validate(all bool) error {
 	if len(errors) > 0 {
 		return GetWisdoms_ResponseMultiError(errors)
 	}
+
 	return nil
 }
 

@@ -2,8 +2,7 @@ package wisdom
 
 import (
 	"context"
-
-	"github.com/pkg/errors"
+	"fmt"
 
 	"github.com/farawaygg/wisdom/internal/storage"
 )
@@ -27,7 +26,7 @@ func (r *Repo) GetWisdoms(ctx context.Context) ([]*Wisdom, error) {
 		})
 		return nil
 	}); err != nil {
-		return nil, errors.WithMessage(err, "storage.GetWisdoms")
+		return nil, fmt.Errorf("storage.GetWisdoms: %w", err)
 	}
 
 	return wisdoms, nil
