@@ -3,9 +3,10 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 	"github.com/serenize/snaker"
 
 	"github.com/farawaygg/wisdom/internal/storage"
@@ -30,7 +31,7 @@ func New(db *sqlx.DB) (*Storage, error) {
 		VALUES(:id, :value, :author_id, :created_at, :updated_at)
 	`)
 	if err != nil {
-		return nil, errors.WithMessage(err, "db.PrepareNamed(stInsertWisdom)")
+		return nil, fmt.Errorf("db.PrepareNamed(stInsertWisdom): %w", err)
 	}
 
 	s.stGetWisdoms, err = db.Preparex(`
@@ -38,22 +39,24 @@ func New(db *sqlx.DB) (*Storage, error) {
 		FROM wisdoms
 	`)
 	if err != nil {
-		return nil, errors.WithMessage(err, "db.Preparex(stGetWisdoms)")
+		return nil, fmt.Errorf("db.Preparex(stGetWisdoms): %w", err)
 	}
+
 	return &s, nil
 }
 
 func (s *Storage) GetWisdoms(ctx context.Context, iter storage.WisdomIterFunc) error {
 	if err := s.queryWisdoms(ctx, iter, s.stGetWisdoms); err != nil {
-		return errors.WithMessage(err, "queryWisdoms")
+		return fmt.Errorf("queryWisdoms: %w", err)
 	}
+
 	return nil
 }
 
 func (s *Storage) CreateWisdom(ctx context.Context, wisdom storage.Wisdom) error {
 	result, err := s.stInsertWisdom.ExecContext(ctx, wisdom)
 	if err != nil {
-		return errors.WithMessage(storageError{err}, "stInsertWisdom.ExecContext")
+		return fmt.Errorf("stInsertWisdom.ExecContext: %w", err)
 	}
 
 	return shouldAffectRows(result)
@@ -74,7 +77,7 @@ func (s *Storage) queryWisdoms(
 	for rows.Next() {
 		var row storage.Wisdom
 		if err := rows.StructScan(&row); err != nil {
-			return errors.WithMessage(err, "scan wallet account record")
+			return fmt.Errorf("scan wallet account record: %w", err)
 		}
 
 		if err := iter(row); err != nil {
@@ -82,7 +85,7 @@ func (s *Storage) queryWisdoms(
 				break
 			}
 
-			return errors.WithMessage(err, "iter")
+			return fmt.Errorf("iter: %w", err)
 		}
 	}
 
@@ -94,18 +97,17 @@ type storageError struct {
 }
 
 func (s storageError) Unwrap() error {
-	causeErr := errors.Cause(s.error)
-	if errors.Is(causeErr, sql.ErrNoRows) {
+	if errors.Is(s.error, sql.ErrNoRows) {
 		return storage.ErrNotFound
 	}
 
-	return causeErr
+	return s.error
 }
 
 func shouldAffectRows(rs sql.Result) error {
 	n, err := rs.RowsAffected()
 	if err != nil {
-		return errors.WithMessage(err, "RowsAffected")
+		return fmt.Errorf("RowsAffected: %w", err)
 	}
 
 	if n <= 0 {

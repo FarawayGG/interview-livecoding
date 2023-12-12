@@ -1,4 +1,4 @@
 Listen:
   GRPC: ":48080"
 LogLevel: debug
-DBConnstring: "postgresql://postgres@localhost:5432/wisdoms_test?sslmode=disable"
+DBConnString: "postgresql://postgres@localhost:5432/wisdoms_test?sslmode=disable"

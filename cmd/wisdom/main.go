@@ -13,7 +13,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/sync/errgroup"
@@ -33,18 +32,18 @@ func main() {
 
 	zl, err := zapcore.ParseLevel(cfg.LogLevel)
 	if err != nil {
-		panic(errors.WithMessage(err, "zapcore.ParseLevel"))
+		panic(fmt.Errorf("zapcore.ParseLevel: %w", err))
 	}
 	zcfg := zap.NewProductionConfig()
 	zcfg.Level = zap.NewAtomicLevelAt(zl)
 	zlog, err := zcfg.Build()
 	if err != nil {
-		panic(errors.WithMessage(err, "zcfg.Build"))
+		panic(fmt.Errorf("zcfg.Build: %w", err))
 	}
 	zap.ReplaceGlobals(zlog)
 	backgroundCtx := ctxzap.ToContext(context.Background(), zlog)
 
-	db, err := psql.Open(cfg.DBConnstring)
+	db, err := psql.Open(cfg.DBConnString)
 	if err != nil {
 		zlog.Panic("openSQL", zap.Error(err))
 	}
