@@ -4,6 +4,6 @@ on:
   push:
 
 jobs:
-  make:
+  test:
     uses: FarawayGG/miniroyale-github-actions/.github/workflows/go-test.yaml@main
     secrets: inherit
